@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Offline Inventory & Requests — Modern</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Offline Inventory</div>
+    <nav class="nav">
+      <button class="nav-btn" data-open="modal-auth">Login</button>
+      <button class="nav-btn" data-open="modal-dashboard">Dashboard</button>
+      <button class="nav-btn" data-open="modal-requests">Purchase Request</button>
+      <button class="nav-btn" data-open="modal-deliveries">Delivery Verification</button>
+      <button class="nav-btn" data-open="modal-inventory">Inventory</button>
+      <button class="nav-btn" data-open="modal-audit">Audit Log</button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero card">
+      <h1>Welcome</h1>
+      <p>Modern offline app for purchase requests, deliveries, inventory tracking and audit logging. Click any button above to open a modal.</p>
+      <div class="sample-actions">
+        <button class="btn primary" data-open="modal-requests">Create Request</button>
+        <button class="btn" data-open="modal-dashboard">View Dashboard</button>
+      </div>
+    </section>
+    <footer class="footer">Built for offline use • Files saved in browser (localStorage)</footer>
+  </main>
+
+  <!-- ===== MODALS ===== -->
+
+  <!-- Auth Modal -->
+  <div id="modal-auth" class="modal" aria-hidden="true">
+    <div class="modal-panel">
+      <header class="modal-head"><h2>Sign In</h2><button class="close" data-close>&times;</button></header>
+      <div class="modal-body">
+        <form id="loginForm" class="form-grid">
+          <label>Username<input id="loginUser" required autocomplete="off"></label>
+          <label>Password<input id="loginPass" type="password" required></label>
+          <div class="row right">
+            <button type="submit" class="btn primary">Sign in</button>
+          </div>
+          <p class="muted">Demo users: <code>site.alex / password</code> (Site) • <code>office.mia / password</code> (Office)</p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard Modal -->
+  <div id="modal-dashboard" class="modal" aria-hidden="true">
+    <div class="modal-panel large">
+      <header class="modal-head"><h2>Dashboard</h2><button class="close" data-close>&times;</button></header>
+      <div class="modal-body">
+        <div class="cards-grid">
+          <div class="card stat">
+            <div class="stat-title">Total SKUs</div>
+            <div id="stat-skus" class="stat-value">0</div>
+          </div>
+          <div class="card stat">
+            <div class="stat-title">On-hand Qty</div>
+            <div id="stat-onhand" class="stat-value">0</div>
+          </div>
+          <div class="card stat">
+            <div class="stat-title">Pending PRs</div>
+            <div id="stat-pending" class="stat-value">0</div>
+          </div>
+          <div class="card stat">
+            <div class="stat-title">Awaiting Delivery</div>
+            <div id="stat-awaiting" class="stat-value">0</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Recent Activity</h3>
+          <ul id="recent-activity" class="log-list"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Purchase Requests Modal -->
+  <div id="modal-requests" class="modal" aria-hidden="true">
+    <div class="modal-panel large">
+      <header class="modal-head"><h2>Purchase Request</h2><button class="close" data-close>&times;</button></header>
+      <div class="modal-body">
+        <form id="prForm">
+          <div id="prLines" class="pr-lines">
+            <!-- dynamic lines appended here -->
+          </div>
+          <div class="row gap">
+            <button id="addPrLine" type="button" class="btn">➕ Add Line</button>
+            <div class="spacer"></div>
+            <button id="compilePr" type="button" class="btn primary">Submit Request</button>
+          </div>
+          <p class="muted">Tip: Add multiple lines and click <strong>Submit Request</strong> to compile them into a single PR.</p>
+        </form>
+        <hr>
+        <h4>Existing Requests</h4>
+        <table class="table" id="requestsTable">
+          <thead><tr><th>PR#</th><th>Lines</th><th>Requester</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deliveries Modal -->
+  <div id="modal-deliveries" class="modal" aria-hidden="true">
+    <div class="modal-panel">
+      <header class="modal-head"><h2>Delivery Verification</h2><button class="close" data-close>&times;</button></header>
+      <div class="modal-body">
+        <table class="table" id="deliveriesTable">
+          <thead><tr><th>PR#</th><th>Item</th><th>Approved</th><th>Delivered</th><th>DR#</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inventory Modal -->
+  <div id="modal-inventory" class="modal" aria-hidden="true">
+    <div class="modal-panel large">
+      <header class="modal-head"><h2>Inventory</h2><button class="close" data-close>&times;</button></header>
+      <div class="modal-body">
+        <div class="row gap">
+          <button id="addInventoryBtn" class="btn">Add Item</button>
+          <div class="spacer"></div>
+          <input id="searchInventory" placeholder="Search item..." />
+        </div>
+        <table class="table" id="inventoryTable">
+          <thead><tr><th>Item</th><th>SKU</th><th>On-hand</th><th>Min</th><th>Max</th><th>Actions</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audit Modal -->
+  <div id="modal-audit" class="modal" aria-hidden="true">
+    <div class="modal-panel large">
+      <header class="modal-head"><h2>Audit Log</h2><button class="close" data-close>&times;</button></header>
+      <div class="modal-body">
+        <div class="row gap">
+          <button id="exportAudit" class="btn">Export JSON</button>
+          <div class="spacer"></div>
+          <button id="clearAudit" class="btn danger">Clear</button>
+        </div>
+        <ul id="auditList" class="log-list"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Small reusable dialog for add/edit inventory -->
+  <div id="modal-edit-item" class="modal" aria-hidden="true">
+    <div class="modal-panel small">
+      <header class="modal-head"><h3 id="editTitle">Add Item</h3><button class="close" data-close>&times;</button></header>
+      <div class="modal-body">
+        <form id="editItemForm">
+          <label>Item Name<input id="editName" required></label>
+          <label>SKU<input id="editSku" required></label>
+          <label>On-hand<input id="editOnhand" type="number" min="0" value="0"></label>
+          <label>Min Level<input id="editMin" type="number" min="0" value="0"></label>
+          <label>Max Level<input id="editMax" type="number" min="0" value="0"></label>
+          <div class="row right gap">
+            <button type="button" class="btn" data-close>Cancel</button>
+            <button type="submit" class="btn primary">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="app.js" defer></script>
+</body>
+</html>
