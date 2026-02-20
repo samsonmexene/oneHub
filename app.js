@@ -6,7 +6,7 @@ const STORAGE_KEY = 'offline_ops_v2';
 // --- State & Sample Data ---
 let state = {
   users: [
-    { id: 'u1', username: 'site.alex', password: 'password', role: 'site', name: 'Alex (Site)' },
+    { id: 'u1', username: 'site.mex', password: 'password', role: 'site', name: 'Alex (Site)' },
     { id: 'u2', username: 'office.mia', password: 'password', role: 'office', name: 'Mia (Office)' }
   ],
   currentUser: null,
